@@ -1,0 +1,311 @@
+# !/bin/bash
+
+#################
+### Behaviour ###
+#################
+
+set $mod Mod4
+
+# change focus
+bindsym $mod+Left focus left
+bindsym $mod+Down focus down
+bindsym $mod+Up focus up
+bindsym $mod+Right focus right
+
+# move window 
+bindsym $mod+Shift+Left move left
+bindsym $mod+Shift+Down move down
+bindsym $mod+Shift+Up move up
+bindsym $mod+Shift+Right move right
+
+# switch to workspace
+bindsym $mod+1 workspace 1
+bindsym $mod+2 workspace 2
+bindsym $mod+3 workspace 3
+bindsym $mod+4 workspace 4
+bindsym $mod+5 workspace 5
+bindsym $mod+6 workspace 6
+bindsym $mod+7 workspace 7
+bindsym $mod+8 workspace 8
+bindsym $mod+9 workspace 9
+bindsym $mod+0 workspace 10
+
+# move focused container to workspace
+bindsym $mod+Shift+1 move container to workspace 1
+bindsym $mod+Shift+2 move container to workspace 2
+bindsym $mod+Shift+3 move container to workspace 3
+bindsym $mod+Shift+4 move container to workspace 4
+bindsym $mod+Shift+5 move container to workspace 5
+bindsym $mod+Shift+6 move container to workspace 6
+bindsym $mod+Shift+7 move container to workspace 7
+bindsym $mod+Shift+8 move container to workspace 8
+bindsym $mod+Shift+9 move container to workspace 9
+bindsym $mod+Shift+0 move container to workspace 10
+
+# Use Mouse+$mod to drag floating windows to their wanted position
+floating_modifier $mod
+
+# split in horizontal orientation
+bindsym $mod+h split h
+
+# split in vertical orientation
+bindsym $mod+v split v
+
+# change container layout (stacked, tabbed, toggle split)
+bindsym $mod+s layout stacking
+bindsym $mod+w layout tabbed
+bindsym $mod+e layout toggle split
+
+# toggle tiling / floating
+bindsym $mod+Shift+space floating toggle
+
+# change focus between tiling / floating windows
+bindsym $mod+space focus mode_toggle
+
+# focus the parent container
+bindsym $mod+a focus parent
+
+# reload the configuration file
+bindsym $mod+Shift+r exec "swaymsg reload"
+
+# resize window (you can also use the mouse for that)
+mode "resize" {
+        # These bindings trigger as soon as you enter the resize mode
+        bindsym Left resize shrink width 9 px or 10 ppt
+        bindsym Down resize grow height 9 px or 10 ppt
+        bindsym Up resize shrink height 9 px or 10 ppt
+        bindsym Right resize grow width 9 px or 10 ppt
+
+        # back to normal: Enter or Escape
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+}
+
+bindsym $mod+r mode "resize"
+
+# App launcher
+set $menu 'rofi -show drun -theme solarized -show-icons'
+
+# start dmenu (a program launcher)
+bindsym $mod+d exec $menu
+
+# focus windows 
+bindsym $mod+Tab exec ~/home2/Documents/shell_scripts/sway/windows.py
+
+# enter fullscreen mode for the focused container
+bindsym $mod+F11 fullscreen toggle
+
+# exit sway session
+bindsym $mod+Shift+e exit
+
+# start a terminal
+bindsym $mod+Return exec foot #mate-terminal 
+# kill focused window
+bindsym $mod+F4 kill
+
+# Cycle through workspaces
+bindsym $mod+Ctrl+Left workspace prev
+bindsym $mod+Ctrl+Right workspace next
+
+# Lock screen and suspend
+bindsym $mod+Escape exec wlogout #"systemctl suspend"
+
+# Swap workspace
+bindsym $mod+y move workspace to output left
+bindsym $mod+x move workspace to output right
+
+# Volume Keys
+bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume 0 +5%
+bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume 0 -5%
+bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute 0 toggle
+
+# Media player controls
+bindsym XF86AudioPlay exec playerctl play
+bindsym XF86AudioPause exec playerctl pause
+bindsym XF86AudioNext exec playerctl next
+bindsym XF86AudioPrev exec playerctl previous
+
+# Screenshots
+set $screenshot_file \"$HOME/Pictures/screenshot-$(date '+%Y-%m-%d_%H-%M-%S').png\"
+bindsym Print exec grim -s1 $screenshot_file
+bindsym $mod+Print exec (slurp | grim -g- -s1 $screenshot_file)
+
+# Applications
+bindsym $mod+q exec "qalculate-gtk"
+bindsym $mod+p exec "pcmanfm"
+bindsym $mod+f exec "firefox"
+bindsym $mod+c exec "code"
+
+# 
+#focus_follows_mouse yes
+
+# Focus specific output at startup
+#exec swaymsg focus output HDMI-A-2
+
+# Switching workspaces back and forth
+workspace_auto_back_and_forth yes
+
+#Idle 
+exec swayidle -w \
+         timeout 600 'swaylock -f -c 000000' \
+         timeout 300 'swaymsg "output * dpms off"' \
+              resume 'swaymsg "output * dpms on"' \
+         before-sleep 'swaylock -f -c 000000'
+
+#smart_borders on
+smart_gaps on
+
+## Settings for specific applications ##
+
+# Floating windows for
+for_window [class="Thunderbird" instance="Msgcompose"] floating enable
+for_window [app_id="qalculate"] floating enable
+for_window [app_id="gnome-system-monitor"] floating enable
+for_window [app_id="pavucontrol"] floating enable
+for_window [app_id="gnome-nettool"] floating enable
+for_window [app_id="nm-connection-editor"] floating enable
+for_window [app_id="gnome-tweaks"] floating enable
+for_window [app_id="baobab"] floating enable
+for_window [app_id="pamac-manager"] floating enable
+for_window [app_id="wdisplays"] floating enable
+for_window [app_id="wdisplays"] resize set 900 500
+
+# Apps at specific workspaces
+assign [app_id="thunderbird"] 2
+assign [app_id="telegramdesktop"] 2
+assign [class="Signal"] 2
+
+##############################
+### Autostart applications ###
+##############################
+
+# Network manager task bar icon
+exec nm-applet --indicator
+
+# Blueman task bar icon
+exec blueman-applet
+
+# Random keyboard colors for logitec G213
+exec_always python ~/applications/github/G213Colors/G213Colors.py -rs
+
+# Set volume for audio output
+exec_always pactl set-sink-volume alsa_output.pci-0000_28_00.3.analog-stereo 28% 25%
+
+# Redshift at night
+exec redshift -v -m wayland -l 51.3:9.5 -t 6000:4500
+
+#########################
+### Keyboard settings ###
+#########################
+
+input 1133:49948:Logitech_USB_Keyboard {
+    xkb_layout de
+}
+input 1:1:AT_Translated_Set_2_keyboard {
+    xkb_layout de
+}
+#input 1133:49974:Logitech_Gaming_Keyboard_G213_Consumer_Control {
+#    xkb_layout de
+#}
+#input 1133:49974:Logitech_Gaming_Keyboard_G213_Keyboard {
+#    xkb_layout de
+#}
+input 1133:49974:Logitech_Gaming_Keyboard_G213 {
+    xkb_layout de
+}
+
+########################
+### Display settings ###
+########################
+
+output DVI-I-1 {
+        mode 1920x1080@60Hz
+        pos 1920 0
+        #max_render_time 2
+        bg /home/max/wallpaper/keyboard.jpg fill
+}
+output DP-1 {
+        mode 1920x1080@60Hz
+        pos 0 0
+#        transform 270
+        adaptive_sync on
+        bg /home/max/wallpaper/linux_free.png fill
+}
+
+##################
+### Appearence ###
+##################
+
+# tango dark
+set $darkblue           #204A87
+set $darkbrown		#8F5902
+set $darkgreen          #4E9A06
+set $darkmagenta	#5C3566
+set $darkred            #A40000
+set $darkyellow         #C4A000
+set $darkorange		#CE5C00
+
+# tango light
+set $lightblue	        #729FCF
+set $lightbrown		#E9B96E
+set $lightgreen         #8AE234
+set $lightmagenta	#AD7FA8
+set $lightred           #EF2929
+set $lightyellow        #FCE94F
+set $lightorange	#FCAF3E
+
+# tango normal
+set $blue               #3465A4
+set $brown		#C17D11
+set $green              #73D216
+set $magenta		#75507B
+set $red                #CC0000
+set $yellow		#EDD400
+set $orange		#F57900
+
+# tango mono
+set $black              #555753
+set $grey               #BABDB6
+set $white              #EEEEEC
+set $darkblack	        #2E3436
+set $darkgrey           #888A85
+set $darkwhite          #D3D7CF
+
+# Font for window titles. 
+# Will also be used by the bar, unless a different font is used in the bar {} block!
+font Font Awesome 5 Free:Regular 9
+
+# Window colors
+client.focused          $lightblue 	$blue 		$white 		$darkblue 	$green
+client.focused_inactive $darkgrey 	$black 		$grey 		$darkgrey       
+client.unfocused        $black 		$darkblack 	$grey 		$darkgrey
+client.urgent           $lightblue 	$blue 		$white 		$darkblue 	$red
+
+# Centered window titles
+title_align center
+font monospace 8
+
+gaps inner 4
+gaps outer 3 
+default_border pixel 2
+for_window [class="^.*"] border pixel 2
+for_window [class="^.*"] default_floating_border pixel 3
+for_window [title="."] title_format "<b>%title</b> (%app_id)"
+#tiling_drag enable 
+#tiling_drag_threshold 5
+
+# GTK theme 
+exec_always {
+	export GTK_THEME=Ant-Nebula
+	gsettings set org.gnome.desktop.interface gtk-theme "Ant-Nebula"
+	gsettings set org.gnome.desktop.interface icon-theme "Gruvbox"
+	gsettings set $gnome-schema cursor-theme "Oxy-whitewater"
+}
+
+# Status bar
+bar {
+    font xft:DejaVu Sans Mono Book, Font Awesome 5 Free 11
+    position bottom
+    swaybar_command waybar
+#	mode hide
+}
